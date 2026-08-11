@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Muscu Maison">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#12161c">
+<title>Muscu Maison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12161c;
+    --surface:#1a2028;
+    --surface-2:#212832;
+    --line:#2b333e;
+    --text:#eae7df;
+    --muted:#8a93a0;
+    --brass:#c9a15c;
+    --brass-dim:#8a7042;
+    --teal:#5b9a91;
+    --band:#d9622c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:60px;
+  }
+  h1,h2,h3,.eyebrow,.stat-num{font-family:'Oswald',sans-serif;}
+  .wrap{max-width:640px;margin:0 auto;padding:28px 20px 0;}
+
+  /* ---- Hero ---- */
+  .hero{position:relative;padding:8px 0 24px;border-bottom:1px solid var(--line);margin-bottom:22px;}
+  .eyebrow{color:var(--brass);font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;}
+  h1{font-size:30px;font-weight:600;letter-spacing:.01em;margin-top:8px;line-height:1.15;}
+  .sub{color:var(--muted);font-size:14px;margin-top:8px;max-width:46ch;line-height:1.5;}
+
+  /* signature: coiled band gauge */
+  .gauge{display:flex;align-items:center;gap:14px;margin-top:20px;}
+  .coil{width:64px;height:28px;flex-shrink:0;}
+  .coil path{
+    fill:none;stroke:var(--band);stroke-width:3;stroke-linecap:round;
+    transition:stroke-dashoffset .4s ease;
+  }
+  .gauge-label{font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
+  .gauge-label b{color:var(--band);font-weight:600;}
+
+  /* ---- Day tabs ---- */
+  .tabs{display:flex;gap:8px;margin-bottom:22px;}
+  .tab{
+    flex:1;background:var(--surface);border:1px solid var(--line);color:var(--muted);
+    padding:12px 6px;border-radius:8px;font-family:'Oswald',sans-serif;font-size:13px;
+    letter-spacing:.04em;text-transform:uppercase;cursor:pointer;text-align:center;
+    transition:all .2s ease;
+  }
+  .tab.active{background:var(--surface-2);border-color:var(--brass-dim);color:var(--brass);}
+  .tab small{display:block;font-family:'Inter',sans-serif;text-transform:none;letter-spacing:0;font-size:10px;margin-top:3px;color:var(--muted);}
+
+  /* ---- Exercise cards ---- */
+  .day{display:none;}
+  .day.active{display:block;}
+  .day-note{color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.5;}
+  .ex{
+    background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    padding:16px 16px;margin-bottom:10px;
+  }
+  .ex-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+  .ex-name{font-size:16px;font-weight:600;}
+  .ex-tag{
+    font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;
+    border-radius:20px;white-space:nowrap;font-weight:500;
+  }
+  .tag-band{background:rgba(217,98,44,.15);color:var(--band);}
+  .tag-body{background:rgba(91,154,145,.15);color:var(--teal);}
+  .ex-meta{display:flex;gap:16px;margin-top:8px;color:var(--muted);font-size:13px;}
+  .ex-meta b{color:var(--text);font-weight:600;}
+  .ex-cue{color:var(--muted);font-size:12.5px;margin-top:6px;line-height:1.5;}
+
+  /* set dots */
+  .dots{display:flex;gap:6px;margin-top:10px;}
+  .dot{
+    width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);
+    cursor:pointer;transition:all .15s ease;flex-shrink:0;
+  }
+  .dot.done{background:var(--brass);border-color:var(--brass);}
+
+  .ex{transition:border-color .3s ease, background .3s ease;}
+  .ex.complete{border-color:var(--brass);background:rgba(201,161,92,.08);}
+
+  section.block-title{
+    font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);margin:22px 0 10px;
+    display:flex;align-items:center;gap:10px;
+  }
+  section.block-title::after{content:'';flex:1;height:1px;background:var(--line);}
+
+  footer{max-width:640px;margin:32px auto 0;padding:0 20px;color:var(--muted);font-size:12px;line-height:1.6;border-top:1px solid var(--line);padding-top:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Programme maison</div>
+    <h1>Haut du corps &amp; core<br>Poids du corps + élastique 20 kg</h1>
+    <p class="sub">3 séances par semaine, sans travail de jambes. Lundi / Mercredi / Vendredi, avec au moins un jour de repos entre deux séances.</p>
+    <div class="gauge">
+      <svg class="coil" viewBox="0 0 64 28"><path id="coilPath" d="M2,14 Q10,2 18,14 T34,14 T50,14 T64,14"/></svg>
+      <div class="gauge-label">Élastique <b>20 kg</b> de tension — coche tes séries en tapant les points</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-day="A">Lundi<small>Pousser</small></div>
+    <div class="tab" data-day="B">Mercredi<small>Tirer</small></div>
+    <div class="tab" data-day="C">Vendredi<small>Full + Core</small></div>
+  </div>
+
+  <!-- DAY A -->
+  <div class="day active" id="day-A">
+    <p class="day-note">Poitrine, épaules, triceps.</p>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Pompes</span><span class="ex-tag tag-body">Poids du corps</span></div>
+      <div class="ex-meta"><span><b>4</b> séries</span><span><b>8–15</b> reps</span><span><b>90 s</b> repos</span></div>
+      <div class="ex-cue">Mains sous les épaules. Si trop dur, poser les genoux au sol.</div>
+      <div class="dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Développé élastique (debout)</span><span class="ex-tag tag-band">Élastique</span></div>
+      <div class="ex-meta"><span><b>4</b> séries</span><span><b>12–15</b> reps</span><span><b>60 s</b> repos</span></div>
+      <div class="ex-cue">Élastique ancré dans le dos à hauteur de poitrine, pousse vers l'avant en soufflant.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Élévations latérales élastique</span><span class="ex-tag tag-band">Élastique</span></div>
+      <div class="ex-meta"><span><b>3</b> séries</span><span><b>12–15</b> reps</span><span><b>45 s</b> repos</span></div>
+      <div class="ex-cue">Pied sur l'élastique, monte les bras à l'horizontale, coudes légèrement fléchis.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Dips triceps sur chaise</span><span class="ex-tag tag-body">Poids du corps</span></div>
+      <div class="ex-meta"><span><b>3</b> séries</span><span><b>8–12</b> reps</span><span><b>60 s</b> repos</span></div>
+      <div class="ex-cue">Mains sur le bord d'une chaise stable, descends en pliant les coudes vers l'arrière.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Extension triceps élastique</span><span class="ex-tag tag-band">Élastique</span></div>
+      <div class="ex-meta"><span><b>3</b> séries</span><span><b>12–15</b> reps</span><span><b>45 s</b> repos</span></div>
+      <div class="ex-cue">Élastique ancré en haut derrière toi, tends les bras vers l'avant/bas.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+  </div>
+
+  <!-- DAY B -->
+  <div class="day" id="day-B">
+    <p class="day-note">Dos, biceps, arrière d'épaules.</p>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Rowing élastique buste penché</span><span class="ex-tag tag-band">Élastique</span></div>
+      <div class="ex-meta"><span><b>4</b> séries</span><span><b>12–15</b> reps</span><span><b>60 s</b> repos</span></div>
+      <div class="ex-cue">Pied sur l'élastique, buste incliné, tire les coudes vers l'arrière en serrant les omoplates.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Tirage vertical élastique</span><span class="ex-tag tag-band">Élastique</span></div>
+      <div class="ex-meta"><span><b>4</b> séries</span><span><b>12–15</b> reps</span><span><b>60 s</b> repos</span></div>
+      <div class="ex-cue">Élastique ancré en hauteur (porte, poteau), tire vers le bas comme un tirage poulie.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Face pull élastique</span><span class="ex-tag tag-band">Élastique</span></div>
+      <div class="ex-meta"><span><b>3</b> séries</span><span><b>15</b> reps</span><span><b>45 s</b> repos</span></div>
+      <div class="ex-cue">Élastique à hauteur de visage, tire vers le visage en écartant les coudes.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Curl biceps élastique</span><span class="ex-tag tag-band">Élastique</span></div>
+      <div class="ex-meta"><span><b>3</b> séries</span><span><b>12–15</b> reps</span><span><b>45 s</b> repos</span></div>
+      <div class="ex-cue">Pieds sur l'élastique, coudes fixes le long du corps, monte les mains.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Superman</span><span class="ex-tag tag-body">Poids du corps</span></div>
+      <div class="ex-meta"><span><b>3</b> séries</span><span><b>12</b> reps</span><span><b>30 s</b> repos</span></div>
+      <div class="ex-cue">Allongé sur le ventre, lève bras et buste en même temps, tiens 1 seconde en haut.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+  </div>
+
+  <!-- DAY C -->
+  <div class="day" id="day-C">
+    <p class="day-note">Full upper body + gainage.</p>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Pompes prise large</span><span class="ex-tag tag-body">Poids du corps</span></div>
+      <div class="ex-meta"><span><b>3</b> séries</span><span><b>8–12</b> reps</span><span><b>60 s</b> repos</span></div>
+      <div class="ex-cue">Mains plus larges que les épaules, cible la poitrine externe.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Rowing élastique unilatéral</span><span class="ex-tag tag-band">Élastique</span></div>
+      <div class="ex-meta"><span><b>3</b> séries / bras</span><span><b>12</b> reps</span><span><b>45 s</b> repos</span></div>
+      <div class="ex-cue">Un bras à la fois, tire vers la hanche en gardant le dos droit.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Pompes pike (épaules)</span><span class="ex-tag tag-body">Poids du corps</span></div>
+      <div class="ex-meta"><span><b>3</b> séries</span><span><b>8–12</b> reps</span><span><b>60 s</b> repos</span></div>
+      <div class="ex-cue">Fesses hautes façon "V" inversé, descends la tête vers le sol.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Planche</span><span class="ex-tag tag-body">Poids du corps</span></div>
+      <div class="ex-meta"><span><b>3</b> séries</span><span><b>30–45 s</b></span><span><b>45 s</b> repos</span></div>
+      <div class="ex-cue">Corps aligné tête-talons, abdos et fessiers contractés.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Rotation du buste élastique</span><span class="ex-tag tag-band">Élastique</span></div>
+      <div class="ex-meta"><span><b>3</b> séries / côté</span><span><b>12</b> reps</span><span><b>30 s</b> repos</span></div>
+      <div class="ex-cue">Élastique ancré sur le côté à hauteur de poitrine, pivote le buste en gardant les hanches fixes.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-name">Crunch</span><span class="ex-tag tag-body">Poids du corps</span></div>
+      <div class="ex-meta"><span><b>3</b> séries</span><span><b>15–20</b> reps</span><span><b>30 s</b> repos</span></div>
+      <div class="ex-cue">Mouvement court, concentre-toi sur la contraction abdominale.</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+  </div>
+
+  <footer>
+    Échauffement conseillé avant chaque séance : 5 min de rotations d'épaules, de bras et de buste.<br>
+    Repos : au moins 48 h entre deux séances qui sollicitent les mêmes groupes musculaires.
+  </footer>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const days = document.querySelectorAll('.day');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      days.forEach(d => d.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('day-' + tab.dataset.day).classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.ex').forEach(ex => {
+    const dots = ex.querySelectorAll('.dot');
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        dot.classList.toggle('done');
+        const allDone = Array.from(dots).every(d => d.classList.contains('done'));
+        if (allDone) {
+          ex.classList.add('complete');
+          setTimeout(() => {
+            dots.forEach(d => d.classList.remove('done'));
+            ex.classList.remove('complete');
+          }, 550);
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
